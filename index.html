@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSnippet | Kod Parçacığı Kütüphanesi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo"><i class="fa-solid fa-code"></i><span>Dev<b>Snippet</b></span></a>
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Snippet başlığı, dil veya etiket ara...">
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-secondary" onclick="exportSnippets()"><i class="fa-solid fa-download"></i> Yedekle</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-upload"></i> Yükle</button>
+                <input type="file" id="importFile" accept=".json,application/json" hidden>
+                <button class="btn btn-primary" id="addSnippetButton" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Snippet Ekle</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+        <aside class="sidebar">
+            <div class="filter-card">
+                <h3><i class="fa-solid fa-people-group"></i> Çalışma Alanı</h3>
+                <label class="sr-only" for="workspaceSelect">Çalışma alanı</label>
+                <select id="workspaceSelect" class="control-select">
+                    <option value="personal">Kişisel Snippet'lar</option>
+                    <option value="team">Ekip / Takım Snippet'ları</option>
+                </select>
+                <label class="field-label" for="roleSelect">Örnek kullanıcı rolü</label>
+                <select id="roleSelect" class="control-select">
+                    <option value="admin">Admin</option>
+                    <option value="developer">Developer</option>
+                    <option value="viewer">Viewer (salt okunur)</option>
+                </select>
+                <p class="role-note" id="roleMessage">Admin: snippet ekleyebilir, düzenleyebilir ve silebilir.</p>
+            </div>
+            <div class="filter-card language-card">
+                <h3><i class="fa-solid fa-layer-group"></i> Diller & Kategoriler</h3>
+                <div class="category-list" id="categoryList">
+                    <button class="cat-btn active" data-lang="all" onclick="filterByLanguage('all', this)"><span><i class="fa-solid fa-border-all"></i> Tüm Diller</span><span class="count-badge" id="countAll">0</span></button>
+                    <button class="cat-btn" data-lang="csharp" onclick="filterByLanguage('csharp', this)"><span><i class="fa-solid fa-hashtag"></i> C# / .NET</span><span class="count-badge" id="countCsharp">0</span></button>
+                    <button class="cat-btn" data-lang="python" onclick="filterByLanguage('python', this)"><span><i class="fa-brands fa-python"></i> Python</span><span class="count-badge" id="countPython">0</span></button>
+                    <button class="cat-btn" data-lang="sql" onclick="filterByLanguage('sql', this)"><span><i class="fa-solid fa-database"></i> SQL / MySQL</span><span class="count-badge" id="countSql">0</span></button>
+                    <button class="cat-btn" data-lang="javascript" onclick="filterByLanguage('javascript', this)"><span><i class="fa-brands fa-js"></i> JavaScript</span><span class="count-badge" id="countJs">0</span></button>
+                    <button class="cat-btn" data-lang="htmlcss" onclick="filterByLanguage('htmlcss', this)"><span><i class="fa-brands fa-html5"></i> HTML & CSS</span><span class="count-badge" id="countHtmlCss">0</span></button>
+                </div>
+            </div>
+        </aside>
+
+        <section class="content-area">
+            <div class="section-header">
+                <h2>Kod Parçacıkları (<span id="snippetCount">0</span>)</h2>
+                <div class="sort-wrapper">
+                    <label for="sortBy"><i class="fa-solid fa-sort"></i> Sırala:</label>
+                    <select id="sortBy" onchange="filterSnippets()"><option value="newest">En Yeniler</option><option value="oldest">En Eskiler</option></select>
+                </div>
+            </div>
+            <p class="storage-status" id="storageStatus" role="status">Yerel depolama kullanılıyor.</p>
+            <div class="snippets-grid" id="snippetsContainer"></div>
+        </section>
+    </main>
+
+    <div class="modal" id="addModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <button type="button" class="close-btn" onclick="closeModal('addModal')" aria-label="Kapat">&times;</button>
+            <h2 id="modalTitle"><i class="fa-solid fa-code-commit"></i> Yeni Kod Parçacığı Ekle</h2>
+            <form id="addSnippetForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group"><label for="formTitle">Snippet Başlığı</label><input type="text" id="formTitle" placeholder="Örn: C# MySQL Bağlantı Sınıfı" required maxlength="120"></div>
+                <div class="form-group"><label for="formLanguage">Programlama Dili</label>
+                    <select id="formLanguage" required>
+                        <option value="csharp">C# / .NET</option><option value="python">Python</option><option value="sql">SQL / MySQL</option><option value="javascript">JavaScript</option><option value="htmlcss">HTML & CSS</option>
+                    </select>
+                </div>
+                <div class="form-group"><label for="formDescription">Açıklama / Kullanım Amacı</label><input type="text" id="formDescription" placeholder="Snippet'in kullanım amacı" required maxlength="500"></div>
+                <div class="form-group"><label for="formCode">Kod Bloğu</label><div id="codeEditor" class="code-editor" aria-label="Kod düzenleyici" hidden></div><textarea id="formCode" rows="8" class="code-input" placeholder="Kodlarınızı buraya yapıştırın..."></textarea><p class="editor-hint" id="editorHint">Monaco yükleniyor; yüklenemezse metin alanı kullanılabilir.</p></div>
+                <div class="modal-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('addModal')">Vazgeç</button><button type="submit" class="btn btn-primary" id="saveSnippetButton">Kütüphaneye Kaydet</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+        <div class="modal-content history-content">
+            <button type="button" class="close-btn" onclick="closeModal('historyModal')" aria-label="Kapat">&times;</button>
+            <h2 id="historyTitle"><i class="fa-solid fa-code-compare"></i> Sürüm geçmişi</h2>
+            <div class="history-controls"><label for="versionSelect">Karşılaştırılacak eski sürüm</label><select id="versionSelect" class="control-select"></select></div>
+            <div id="diffView" class="diff-view" aria-live="polite"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
