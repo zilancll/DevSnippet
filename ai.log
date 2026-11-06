@@ -1,0 +1,29 @@
+# AI Kullanım Logu (DevSnippet Projesi)
+
+## Proje Bilgileri
+* **Proje Adı:** DevSnippet (Kod Parçacığı Kütüphanesi)
+* **Tarih:** 2026-11-06
+
+---
+
+## Yapay Zeka İstemleri (Prompts) ve Katkıları
+
+### 1. Proje Yapısı ve HTML Tasarımı
+* **Soru / İstem:** "Kod parçacıklarını listeleyen ve yeni snippet ekleme formu olan HTML5 yapısını nasıl kurarım?"
+* **Alınan Destek:** Semantik HTML5 etiketleri (header, main, section) ve form elemanlarının temel yapısı oluşturuldu.
+
+### 2. Styling ve Arayüz Tasarımı (CSS)
+* **Soru / İstem:** "Karanlık tema (Dark mode) uyumlu CSS grid layout ve responsive kod kartları nasıl yazılır?"
+* **Alınan Destek:** CSS esnek kutu (Flexbox) ve kart tasarımları için stiller alındı, renk paleti düzenlendi.
+
+### 3. Dinamik İşlevsellik ve Veri Saklama (JavaScript)
+* **Soru / İstem:** "Yeni eklenen kod snippet'larını tarayıcı kapatılınca silinmemesi için localStorage üzerinde nasıl saklarım?"
+* **Alınan Destek:** `localStorage.setItem()` ve `localStorage.getItem()` fonksiyonları yazıldı, JSON formatında kayıt ve okuma yapısı kuruldu.
+
+### 4. Hata Çözümü ve Yapılandırma
+* **Soru / İstem:** "GitHub Pages üzerinden projeyi yayınlarken static dosyaların doğru yüklenmesi için dosya dizini nasıl olmalı?"
+* **Alınan Destek:** `index.html` dosya ismi standartları ve dosya yolları kontrol edildi.
+
+---
+## Özet
+Proje geliştirme sürecinde yapay zeka; mimari yapı oluşturma, CSS düzenlemeleri ve Vanilla JS ile `localStorage` veri entegrasyonu aşamalarında danışman ve asistan olarak kullanılmıştır.
